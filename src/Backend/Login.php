@@ -1,11 +1,11 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json; charset=UTF-8");
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
+    http_response_code(200);
     exit();
 }
 
@@ -14,30 +14,16 @@ require_once __DIR__ . "/Koneksi.php";
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode([
         "success" => false,
-        "message" => "Endpoint Login.php aktif. Gunakan method POST untuk login."
+        "message" => "Method tidak diizinkan."
     ]);
     $conn->close();
     exit();
 }
 
-/*
-| Ambil data dari form-urlencoded atau JSON
-*/
-$username = "";
-$password = "";
+$data = json_decode(file_get_contents("php://input"), true);
 
-if (!empty($_POST)) {
-    $username = trim($_POST["username"] ?? "");
-    $password = trim($_POST["password"] ?? "");
-} else {
-    $rawInput = file_get_contents("php://input");
-    $data = json_decode($rawInput, true);
-
-    if (is_array($data)) {
-        $username = trim($data["username"] ?? "");
-        $password = trim($data["password"] ?? "");
-    }
-}
+$username = trim($data["username"] ?? "");
+$password = trim($data["password"] ?? "");
 
 if ($username === "" || $password === "") {
     echo json_encode([
@@ -65,20 +51,11 @@ if (!$stmt) {
 }
 
 $stmt->bind_param("s", $username);
+$stmt->execute();
 
-if (!$stmt->execute()) {
-    echo json_encode([
-        "success" => false,
-        "message" => "Query gagal dijalankan: " . $stmt->error
-    ]);
-    $stmt->close();
-    $conn->close();
-    exit();
-}
+$result = $stmt->get_result();
 
-$stmt->store_result();
-
-if ($stmt->num_rows === 0) {
+if ($result->num_rows === 0) {
     echo json_encode([
         "success" => false,
         "message" => "Username tidak ditemukan."
@@ -88,14 +65,22 @@ if ($stmt->num_rows === 0) {
     exit();
 }
 
-$stmt->bind_result($idUser, $usernameDb, $passwordDatabase);
-$stmt->fetch();
+$row = $result->fetch_assoc();
 
+$passwordDatabase = $row["password"];
+
+/*
+|--------------------------------------------------------------------------
+| Cek Password
+| Untuk sekarang cocok dengan password biasa seperti: 12345
+| Kalau nanti pakai password_hash(), tetap bisa dicek dengan password_verify()
+|--------------------------------------------------------------------------
+*/
 $passwordCocok = false;
 
 if ($password === $passwordDatabase) {
     $passwordCocok = true;
-} elseif (password_verify($password, $passwordDatabase)) {
+} else if (password_verify($password, $passwordDatabase)) {
     $passwordCocok = true;
 }
 
@@ -113,8 +98,8 @@ echo json_encode([
     "success" => true,
     "message" => "Login berhasil.",
     "data" => [
-        "idUser" => (int)$idUser,
-        "username" => $usernameDb
+        "idUser" => (int)$row["id_user"],
+        "username" => $row["username"]
     ]
 ]);
 
