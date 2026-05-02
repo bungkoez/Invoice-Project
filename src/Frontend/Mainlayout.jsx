@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../Sidebar";
 import Topbar from "../Topbar";
 
-export default function MainLayout() {
+export default function Mainlayout() {
   const location = useLocation();
 
   let title = "Dashboard";
