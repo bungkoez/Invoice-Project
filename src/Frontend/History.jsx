@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-const API_URL = "http://localhost/Invoice%20project/src/Backend/History.php";
+const API_URL = "https://invoice-project.infinityfreeapp.com/api/History.php";
 
 export default function History() {
   const [dataHistory, setDataHistory] = useState([]);

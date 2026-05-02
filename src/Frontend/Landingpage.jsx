@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost/Invoice%20project/src/Backend/Login.php";
+const API_URL = "https://invoice-project.infinityfreeapp.com/api/Login.php";
 
 export default function Landingpage() {
   const [username, setUsername] = useState("");

@@ -117,7 +117,7 @@ export default function Order() {
       setIsSaving(true);
 
       const response = await fetch(
-        "http://localhost/Invoice%20project/src/Backend/Detailbarang.php",
+        "https://invoice-project.infinityfreeapp.com/api/Detailbarang.php",
         {
           method: "POST",
           headers: {

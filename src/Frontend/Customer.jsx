@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { buatTemplateInvoice } from "./Invoicetemplate";
 
-const API_URL = "http://localhost/Invoice%20project/src/Backend/Detailbarang.php";
+const API_URL = "https://invoice-project.infinityfreeapp.com/api/Detailbarang.php";
 
 export default function OrderList() {
   const [dataPesanan, setDataPesanan] = useState([]);
