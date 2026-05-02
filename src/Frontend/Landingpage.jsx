@@ -1,68 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost/Invoice%20project/src/Backend/Login.php";
-
 export default function Landingpage() {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
 
     const usernameValue = username.trim();
-    const passwordValue = password.trim();
 
-    if (!usernameValue || !passwordValue) {
-      setError("Username dan password wajib diisi.");
+    if (!usernameValue) {
+      setError("Username wajib diisi.");
       return;
     }
 
-    try {
-      setLoading(true);
-      setError("");
+    // Login sementara tanpa PHP/backend
+    localStorage.setItem("id_user", "1");
+    localStorage.setItem("username", usernameValue);
 
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: usernameValue,
-          password: passwordValue,
-        }),
-      });
-
-      const text = await response.text();
-
-      let result;
-      try {
-        result = JSON.parse(text);
-      } catch {
-        console.error("Response Login bukan JSON:", text);
-        throw new Error("Response Login.php bukan JSON. Cek file PHP.");
-      }
-
-      if (!result.success) {
-        setError(result.message || "Username atau password salah.");
-        return;
-      }
-
-      localStorage.setItem("id_user", result.data.idUser);
-      localStorage.setItem("username", result.data.username);
-
-      navigate("/app/dashboard");
-    } catch (error) {
-      console.error(error);
-      setError(error.message || "Terjadi kesalahan saat login.");
-    } finally {
-      setLoading(false);
-    }
+    navigate("/app/dashboard");
   };
 
   return (
@@ -86,7 +45,7 @@ export default function Landingpage() {
             </h2>
 
             <p className="mt-2 text-sm text-slate-600">
-              Silakan login dulu yaa
+              Masuk tanpa password untuk sementara
             </p>
           </div>
 
@@ -101,35 +60,8 @@ export default function Landingpage() {
                 placeholder="Masukkan username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                disabled={loading}
-                className="w-full rounded-2xl border border-white/60 bg-white/50 px-4 py-3 text-slate-800 outline-none placeholder:text-slate-400 transition focus:border-fuchsia-300 focus:ring-2 focus:ring-fuchsia-200 disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full rounded-2xl border border-white/60 bg-white/50 px-4 py-3 text-slate-800 outline-none placeholder:text-slate-400 transition focus:border-fuchsia-300 focus:ring-2 focus:ring-fuchsia-200"
               />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Password
-              </label>
-
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Masukkan password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                  className="w-full rounded-2xl border border-white/60 bg-white/50 px-4 py-3 pr-16 text-slate-800 outline-none placeholder:text-slate-400 transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-200 disabled:cursor-not-allowed disabled:opacity-70"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={loading}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-500 transition hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
             </div>
 
             {error && (
@@ -140,14 +72,9 @@ export default function Landingpage() {
 
             <button
               type="submit"
-              disabled={loading}
-              className={`w-full rounded-2xl px-4 py-3 font-semibold text-white shadow-lg transition duration-300 ${
-                loading
-                  ? "cursor-not-allowed bg-slate-400"
-                  : "bg-gradient-to-r from-fuchsia-400 via-pink-400 to-cyan-400 hover:shadow-xl"
-              }`}
+              className="w-full rounded-2xl bg-gradient-to-r from-fuchsia-400 via-pink-400 to-cyan-400 px-4 py-3 font-semibold text-white shadow-lg transition duration-300 hover:shadow-xl"
             >
-              {loading ? "Memeriksa..." : "Masuk"}
+              Masuk
             </button>
           </div>
         </form>
