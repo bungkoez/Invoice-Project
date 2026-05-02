@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Landingpage from "./Frontend/Landingpage";
-import MainLayout from "./Frontend/MainLayout";
+import MainLayout from "./Frontend/Mainlayout";
 import Dashboard from "./Frontend/Dashboard";
 import Order from "./Frontend/Order";
 import Customer from "./Frontend/Customer";
